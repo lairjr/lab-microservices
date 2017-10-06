@@ -1,0 +1,9 @@
+version: '3'
+services:
+  api:
+    build: .
+    command: yarn start
+    ports:
+    - "3000:3000"
+    volumes:
+    - ./src:/api/src
