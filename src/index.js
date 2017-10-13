@@ -2,23 +2,24 @@ var express = require('express');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 var app = express();
-var ProgramSerializer = new JSONAPISerializer('programs', {
-  attributes: ['title', 'category']
+var ProgramSerializer = new JSONAPISerializer('program', {
+  attributes: ['program_id', 'status', 'tenent_id']
 });
 
 app.get('/', function (req, res) {
-  res.send('Hello World!')
+  res.send('Hello World!');
 });
 
 app.get('/programs', function (req, res) {
-  var programData = [
+  var programsData = [
     {
       id: 1,
-      title: 'Jornal do Almoço',
-      category: 'Notícias'
+      program_id: 1451,
+      tenent_id: 'globosatPlay',
+      status: 'ACTIVE'
     }
   ];
-  res.send(ProgramSerializer.serialize(programData));
+  res.send(ProgramSerializer.serialize(programsData));
 });
 
 app.listen(3000);
