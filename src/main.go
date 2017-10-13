@@ -1,71 +1,41 @@
 package main
 
 import (
-    "encoding/json"
     "github.com/gorilla/mux"
+    "github.com/google/jsonapi"
     "log"
     "net/http"
 )
 
-type Person struct {
-    ID        string   `json:"id,omitempty"`
-    Firstname string   `json:"firstname,omitempty"`
-    Lastname  string   `json:"lastname,omitempty"`
-    Address   *Address `json:"address,omitempty"`
+type Program struct {
+    ID         int      `jsonapi:"primary,program"`
+    Program_ID string   `jsonapi:"attr,program_id"`
+    Tenent_ID  string   `jsonapi:"attr,tenent_id"`
+    Status     string   `jsonapi:"attr,status"`
 }
-type Address struct {
-    City  string `json:"city,omitempty"`
-    State string `json:"state,omitempty"`
-}
-var people []Person
+var programs []*Program
 
-// Display all from the people var
-func GetPeople(w http.ResponseWriter, r *http.Request) {
-    json.NewEncoder(w).Encode(people)
-}
+// Display all from the programs var
+func GetPrograms(w http.ResponseWriter, r *http.Request) {
+    jsonapiRuntime := jsonapi.NewRuntime().Instrument("program")
 
-// Display a single data
-func GetPerson(w http.ResponseWriter, r *http.Request) {
-    params := mux.Vars(r)
-    for _, item := range people {
-        if item.ID == params["id"] {
-            json.NewEncoder(w).Encode(item)
-            return
-        }
-    }
-    json.NewEncoder(w).Encode(&Person{})
-}
+    w.Header().Set("Content-Type", jsonapi.MediaType)
+	  w.WriteHeader(http.StatusOK)
 
-// create a new item
-func CreatePerson(w http.ResponseWriter, r *http.Request) {
-    params := mux.Vars(r)
-    var person Person
-    _ = json.NewDecoder(r.Body).Decode(&person)
-    person.ID = params["id"]
-    people = append(people, person)
-    json.NewEncoder(w).Encode(people)
-}
-
-// Delete an item
-func DeletePerson(w http.ResponseWriter, r *http.Request) {
-    params := mux.Vars(r)
-    for index, item := range people {
-        if item.ID == params["id"] {
-            people = append(people[:index], people[index+1:]...)
-            break
-        }
-        json.NewEncoder(w).Encode(people)
-    }
+    if err := jsonapiRuntime.MarshalPayload(w, programs); err != nil {
+		    http.Error(w, err.Error(), http.StatusInternalServerError)
+	  }
 }
 
 // our main function
 func main() {
   router := mux.NewRouter()
-  people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
-  people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
-  router.HandleFunc("/people", GetPeople).Methods("GET")
-  router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
-  router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
-  router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
+  program := new(Program)
+  program.ID = 1
+  program.Program_ID = "1234"
+  program.Tenent_ID = "globosatPlay"
+  program.Status = "ACTIVE"
+  programs = append(programs, program)
+  router.HandleFunc("/programs", GetPrograms).Methods("GET")
   log.Fatal(http.ListenAndServe(":3000", router))
 }
