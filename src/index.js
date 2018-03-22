@@ -6,6 +6,14 @@ const ProgramSerializer = new Serializer('program', {
   attributes: ['program_id', 'status', 'tenent_id']
 });
 
+const someAsyncFunc = () => (
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('Agora');
+    }, 2000)
+  })
+)
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -21,5 +29,10 @@ app.get('/programs', (req, res) => {
   ];
   res.send(ProgramSerializer.serialize(programsData));
 });
+
+app.get('/async', async (req, res) => {
+  const result = await someAsyncFunc();
+  res.send(result);
+})
 
 app.listen(3000);
