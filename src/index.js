@@ -1,17 +1,17 @@
-var express = require('express');
-var JSONAPISerializer = require('jsonapi-serializer').Serializer;
+import express from 'express';
+import { Serializer } from 'jsonapi-serializer';
 
-var app = express();
-var ProgramSerializer = new JSONAPISerializer('program', {
+const app = express();
+const ProgramSerializer = new Serializer('program', {
   attributes: ['program_id', 'status', 'tenent_id']
 });
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/programs', function (req, res) {
-  var programsData = [
+app.get('/programs', (req, res) => {
+  const programsData = [
     {
       id: 1,
       program_id: 1451,
