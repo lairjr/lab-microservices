@@ -1,7 +1,11 @@
 import express from 'express';
 import { Serializer } from 'jsonapi-serializer';
+import websocket from './websocket';
+import ws from 'express-ws';
 
 const app = express();
+ws(app);
+
 const ProgramSerializer = new Serializer('program', {
   attributes: ['program_id', 'status', 'tenent_id']
 });
@@ -13,6 +17,8 @@ const someAsyncFunc = () => (
     }, 2000)
   })
 )
+
+app.ws('/connect', websocket);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
