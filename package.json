@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/index.js",
+    "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files"
   },
   "repository": "git@github.com:lairjr/lab-microservices.git",
   "author": "Lair Júnior",
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.1",
+    "express-ws": "^3.0.0",
     "jsonapi-serializer": "^3.5.5"
   },
   "devDependencies": {
